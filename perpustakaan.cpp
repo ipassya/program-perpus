@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <fstream>
+#include <conio.h>
 using namespace std;
 
 struct Mahasiswa{
@@ -16,10 +17,10 @@ struct buku{
 	Mahasiswa mahasiswa;
 }perpus[100], temp;
 
-int getOption(int &pilih);
-int getOptionSearch(int &pilih);
-int getOptionSort(int &pilih);
-int getOptionProcessing(int &pilih);
+int getOption(int *pilih);
+int getOptionSearch(int *pilih);
+int getOptionSort(int *pilih);
+int getOptionProcessing(int *pilih);
 void writeData(fstream &data, int &jmlData, buku perpus[], string &myFile);
 void input(fstream &data, int &jmlData, string &myFile);
 void output(int &jmlData);
@@ -38,6 +39,7 @@ void readDataMerging(ifstream &dataIn, int &jmlData, buku perpus[], string &myFi
 void writeDataMerging(fstream &data, int &jmlData, buku perpus[], string &myFileTransaksi);
 void readDataMergingSambung(ifstream &dataIn, int &jmlData, buku perpus[], string &myFileTransaksi);
 void readDataMergingUrut(fstream &data, ifstream &dataIn, int &jmlData, buku perpus[], string &myFileTransaksi);
+void bubbleSort(buku perpus[], int jmlData);
 void splitting(ifstream &dataIn, fstream &data, int &jmlData, buku perpus[]);
 
 int main(){
@@ -52,7 +54,7 @@ int main(){
 	enum optionSort{BUBBLE = 1, SELECTION, INSERTION, SHELL, MERGE, QUICK};
 	enum optionProcessing{MERGING_SAMBUNG = 1, MERGING_URUT, SPLITTING};
 	
-	int pilihan = getOption(pilih);
+	int pilihan = getOption(&pilih);
 	while(pilihan != EXIT){
 		switch(pilihan){
 			case INPUT :
@@ -64,35 +66,31 @@ int main(){
 				readData(dataIn, jmlData, perpus, myFile);
 				break;
 			case SORTING :
-				pilihan = getOptionSort(pilih);
+				pilihan = getOptionSort(&pilih);
 				switch(pilihan){
 					case BUBBLE :
 						cout << "\nBubble Sort" << endl;
 						readData(dataIn, jmlData, perpus, myFile);
 						bubble(perpus, jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					case SELECTION :
 						cout << "\nSelection Sort" << endl;
 						readData(dataIn, jmlData, perpus, myFile);
 						selection(perpus, jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					case INSERTION :
 						cout << "\nInsertion Sort" << endl;
 						readData(dataIn, jmlData, perpus, myFile);
 						insertion(perpus, jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					case SHELL :
 						cout << "\nShell Sort" << endl;
 						readData(dataIn, jmlData, perpus, myFile);
 						shell(perpus, jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					case MERGE :
 						cout << "\nMerge Sort" << endl;
@@ -100,7 +98,6 @@ int main(){
 						mergeSort(perpus, 0, jmlData-1);
 						output(jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					case QUICK :
 						cout << "\nQuick Sort" << endl;
@@ -108,7 +105,6 @@ int main(){
 						quick(perpus, 0, jmlData-1);
 						output(jmlData);
 						writeDataSort(data, jmlData, perpus, myFile);
-						binary(jmlData, perpus);
 						break;
 					default :
 						cout << "Pilihan tidak ditemukan" << endl;
@@ -116,7 +112,7 @@ int main(){
 				}
 				break;
 			case SEARCHING :
-				pilihan = getOptionSearch(pilih);
+				pilihan = getOptionSearch(&pilih);
 				switch(pilihan){
 					case SEQUENTIAL :
 						cout << "\nSequential Search" << endl;
@@ -124,7 +120,7 @@ int main(){
 						sequential(jmlData, perpus);
 						break;
 					case BINARY :
-						pilihan = getOptionSort(pilih);
+						pilihan = getOptionSort(&pilih);
 						switch(pilihan){
 							case BUBBLE :
 								cout << "\nBubble Sort" << endl;
@@ -176,7 +172,7 @@ int main(){
 						}
 						break;
 					case BACK :
-						pilihan = getOption(pilih);
+						pilihan = getOption(&pilih);
 						break;
 					default :
 						cout << "Pilihan tidak ditemukan" << endl;
@@ -184,10 +180,10 @@ int main(){
 				}
 				break;
 			case PROCESSING :
-				pilihan = getOptionProcessing(pilih);
+				pilihan = getOptionProcessing(&pilih);
 				switch(pilihan){
 					case MERGING_SAMBUNG :
-						cout << "\nMerging Sambung" << endl;
+						cout << "\n Sambung Data" << endl;
 						cout << "\n-----------------------------------\n";
 						cout << "\nMasukkan nama file hasil transaksi : "; cin >> myFileTransaksi;
 						cout << "\n-----------------------------------\n";
@@ -198,14 +194,16 @@ int main(){
 						cout << "Masukan nama file kedua : "; 
 						readDataMerging(dataIn, jmlData, perpus, myFile);
 						writeDataMerging(data, jmlData, perpus, myFileTransaksi);
+						cout << "\n Press enter to start the process............... ";
+						getch();
 						cout << "\n===================================\n";
-						cout << "Hasil merging sambung" << endl;
+						cout << "Hasil sambung data" << endl;
 						readDataMergingSambung(dataIn, jmlData, perpus, myFileTransaksi);
 						break;
 					case MERGING_URUT :
-						cout << "\nMerging Urut" << endl;
+						cout << "\nSambung Data Urut " << endl;
 						cout << "\n-----------------------------------\n";
-						cout << "\nMasukkan nama file hasil transaksi : "; cin >> myFileTransaksi;
+						cout << "\nMasukkan nama file hasil Sambung Data urut : "; cin >> myFileTransaksi;
 						cout << "\n-----------------------------------\n";
 						cout << "Masukan nama file pertama : "; 
 						readDataMerging(dataIn, jmlData, perpus, myFile);
@@ -214,12 +212,14 @@ int main(){
 						cout << "Masukan nama file kedua : "; 
 						readDataMerging(dataIn, jmlData, perpus, myFile);
 						writeDataMerging(data, jmlData, perpus, myFileTransaksi);
+						cout << "\n Press enter to start the process............... ";
+						getch();
 						cout << "\n===================================\n";
-						cout << "Hasil merging Urut" << endl;
+						cout << "Hasil Sambung Data Urut" << endl;
 						readDataMergingUrut(data, dataIn, jmlData, perpus, myFileTransaksi);
 						break;
 					case SPLITTING :
-						cout << "\nSplitting" << endl;
+						cout << "\nPisah Data" << endl;
 						cout << "\n-----------------------------------\n";
 						readData(dataIn, jmlData, perpus, myFile);
 						splitting(dataIn, data, jmlData, perpus);
@@ -239,7 +239,7 @@ int main(){
 		cout << "\n\nLanjutkan?(y/n) : ";
 		cin >> is_continue;
 		if ( (is_continue == 'y') | (is_continue == 'Y')){
-			pilihan = getOption(pilih);
+			pilihan = getOption(&pilih);
 		} else if ((is_continue == 'n') | (is_continue == 'N')){
 			break;
 		} else {
@@ -252,23 +252,23 @@ int main(){
 	return 0;
 }
 
-int getOption(int &pilih){
+int getOption(int *pilih){
 	system("cls");
 	cout << "Menu" << endl;
 	cout << "==================" << endl;
 	cout << "1. Input Data" << endl;
 	cout << "2. Output Data" << endl;
-	cout << "3. Sorting Data" << endl;
-	cout << "4. Searching Data" << endl;
+	cout << "3. Pengurutan Data" << endl;
+	cout << "4. Pencarian Data" << endl;
 	cout << "5. Pengolahan Data" << endl;
 	cout << "6. Exit" << endl;
 	cout << "==================" << endl;
-	cout << "Pilih [1-6]? : "; cin >> pilih;
+	cout << "Pilih [1-6]? : "; cin >> *pilih;
 	
-	return pilih;
+	return *pilih;
 }
 
-int getOptionSearch(int &pilih){
+int getOptionSearch(int *pilih){
 	system("cls");
 	cout << "Menu Searching" << endl;
 	cout << "========================" << endl;
@@ -276,12 +276,12 @@ int getOptionSearch(int &pilih){
 	cout << "2. Binary Search" << endl;
 	cout << "3. Kembali ke Menu Utama" << endl;
 	cout << "========================" << endl;
-	cout << "Pilih Searching [1-3] : "; cin >> pilih;
+	cout << "Pilih Searching [1-3] : "; cin >> *pilih;
 	
-	return pilih;
+	return *pilih;
 }
 
-int getOptionSort(int &pilih){
+int getOptionSort(int *pilih){
 	system("cls");
 	cout << "Menu Sorting" << endl;
 	cout << "========================" << endl;
@@ -292,22 +292,22 @@ int getOptionSort(int &pilih){
 	cout << "5. Merge Sort" << endl;
 	cout << "6. Quick Sort" << endl;
 	cout << "========================" << endl;
-	cout << "Pilih Sorting [1-6] : "; cin >> pilih;
+	cout << "Pilih Sorting [1-6] : "; cin >> *pilih;
 	
-	return pilih;
+	return *pilih;
 }
 
-int getOptionProcessing(int &pilih){
+int getOptionProcessing(int *pilih){
 	system("cls");
 	cout << "Menu Transaksi" << endl;
 	cout << "========================" << endl;
-	cout << "1. Merging Sambung" << endl;
-	cout << "2. Merging Urut" << endl;
-	cout << "3. Splitting" << endl;
+	cout << "1. Sambung Data" << endl;
+	cout << "2. Sambung Data Urut (by Name)" << endl;
+	cout << "3. Pisah Data (by NIM)" << endl;
 	cout << "========================" << endl;
-	cout << "Pilih Sorting [1-3] : "; cin >> pilih;
+	cout << "Pilih Sorting [1-3] : "; cin >> *pilih;
 	
-	return pilih;
+	return *pilih;
 }
 
 void writeData(fstream &data, int &jmlData, buku perpus[], string &myFile){
@@ -753,9 +753,29 @@ void readDataMergingUrut(fstream &data, ifstream &dataIn, int &jmlData, buku per
 	}
 }
 
+void bubbleSort(buku perpus[], int jmlData){ 
+	// Base case 
+	if (jmlData == 1){
+		return;
+	}
+	
+	// One pass of bubble sort. After 
+	// this pass, the largest element 
+	// is moved (or bubbled) to end. 
+	for (int i = 0; i < jmlData-1; i++){
+		if (perpus[i].mahasiswa.nim > perpus[i+1].mahasiswa.nim){
+			swap(perpus[i], perpus[i+1]);
+		}
+	}
+	
+	// Largest element is fixed, 
+	// recur for remaining array 
+	bubbleSort(perpus, jmlData-1); 
+}
+
 void splitting(ifstream &dataIn, fstream &data, int &jmlData, buku perpus[]){
 	string nim, myFileTransaksi1, myFileTransaksi2;
-	for(int i = 0; i < jmlData-1; i++){
+	/*for(int i = 0; i < jmlData-1; i++){
 		for(int j = 0; j < jmlData-1-i; j++){
 			if(perpus[j].mahasiswa.nim > perpus[j+1].mahasiswa.nim){
 				temp = perpus[j];
@@ -763,7 +783,8 @@ void splitting(ifstream &dataIn, fstream &data, int &jmlData, buku perpus[]){
 				perpus[j+1] = temp;
 			}
 		}
-	}
+	}*/
+	bubbleSort(perpus, jmlData); 
 	
 	cout << "\n-----------------------------------\n";
 	cout << "Masukkan NIM kurang dari : "; cin >> nim;
@@ -786,7 +807,8 @@ void splitting(ifstream &dataIn, fstream &data, int &jmlData, buku perpus[]){
 		}
 	}
 	int jmlData1 = jmlData;
-	jmlData1 -= k;
+	jmlData1 -= (k+2);
+	cout << k;
 	
 	cout << "Masukkan nama file pertama : "; cin >> myFileTransaksi1;
 	data.open(myFileTransaksi1, ios::trunc | ios::out);
@@ -817,6 +839,8 @@ void splitting(ifstream &dataIn, fstream &data, int &jmlData, buku perpus[]){
 	data.close();
 	
 	cout << "\n-----------------------------------\n";
+	cout << "\n Press enter to start the process............... ";
+	getch();
 	cout << "\nOutput File Pertama" << endl;
 	i = 0;
 	dataIn.open(myFileTransaksi1, ios::in);
